@@ -1,0 +1,21 @@
+{
+  "name": "vertai-log-analyzer",
+  "version": "2.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "analyze": "node src/index.js",
+    "validate": "node csv-validator.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["log-analysis", "datadog", "503-errors", "ai-analysis", "google-gemini"],
+  "author": "Rakesh Pabhakaran",
+  "license": "MIT",
+  "description": "AI-Powered Log Analysis Solution with Google Gemini integration for Datadog CSV exports",
+  "dependencies": {
+    "@google/genai": "^1.5.1",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.5.0"
+  }
+}

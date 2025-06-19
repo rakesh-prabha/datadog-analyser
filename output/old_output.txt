@@ -1,0 +1,259 @@
+Starting analysis of /Users/rakeshpabhakaran/dev/vertai/src/extract-2025-06-19T05_50_23.398Z.csv for 503 errors...
+Found 503 error #1 in service: bhyve-task-order-create-lambda, order: 457bf7a2-e440-4cbf-8cd1-f0ff31721dd7 (time: 2025-06-18T21:20:48)
+Message snippet: TASK api - onResponseError { "requestStartedAt": 1750281648523, "requestEndedAt": 1750281648548, "duration": 25, "response": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\"http://www.w3.org/TR/...
+Found 503 error #2 in service: bhyve-task-order-create-lambda, order: 12885d9c-ef53-4189-888f-817b290b8413 (time: 2025-06-18T21:18:06)
+Message snippet: TASK api - onResponseError { "requestStartedAt": 1750281486062, "requestEndedAt": 1750281486086, "duration": 24, "response": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\"http://www.w3.org/TR/...
+Found 503 error #3 in service: bhyve-task-order-create-lambda, order: 5a785949-fae6-4af9-8c59-f8329847e40a (time: 2025-06-18T21:17:04)
+Message snippet: TASK api - onResponseError { "requestStartedAt": 1750281424139, "requestEndedAt": 1750281424164, "duration": 25, "response": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\"http://www.w3.org/TR/...
+
+Finished parsing CSV.
+Total rows processed: 180
+Total 503 errors found: 36
+
+--- Analysis Summary for Gemini ---
+Log analysis results summary:
+Total logs analyzed: 180
+Total "503 Service Unavailable" errors detected: 36
+
+Breakdown of 503 errors by store/service:
+- Store/Service "bhyve-task-order-create-lambda": 36 errors
+
+Breakdown of 503 errors by Order ID with Customer Details:
+- Order "457bf7a2-e440-4cbf-8cd1-f0ff31721dd7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Zachary Wilson (zach_xl8@hotmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "12885d9c-ef53-4189-888f-817b290b8413" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "5a785949-fae6-4af9-8c59-f8329847e40a" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "8fa64e46-9ae2-4e52-8634-2f1b2b51cdc7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "08506a26-2201-4d22-8e68-d984a44436de" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "3a985a0d-2229-4397-b792-180572746479" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "94714faf-29f1-41cc-94cb-7afe1f63f3fc" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Leonie Scalia (ljscalia@bigpond.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "4c773101-aa3d-4294-a4c6-556c0e13ce85" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Sam Simmons (j4d7tqb9x6@privaterelay.appleid.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "5efdcad6-1b06-456e-a8e7-fa21377b195b" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Alejandro Toro (cxvn2jn68g@privaterelay.appleid.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "c5ed8f48-2661-4089-9dd3-00501e36207b" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "d9511144-bd51-4c8c-a257-637fb3e0774d" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "30e0bb36-e03b-4d2e-8b8c-fec62732de38" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "1c25cb1d-ea1f-462d-bd03-57c8bc17b455" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "9badf0b2-adc8-41bd-b4d8-ea7ad53745d6" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "95365f31-f8ca-4424-a162-4a01235284d4" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Logan Lincoln (logan.lincoln@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "27ca587b-4052-4dc9-8ca7-bbb0bc1d4660" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Logan Lincoln (logan.lincoln@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "1061e8b1-4909-4548-a7f7-05d8e44bdf0c" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "46b1cfb6-8d98-4d3f-bb76-14e26aa878bf" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "2df891ff-b5f6-4d1b-8e8f-9046773819a7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Raneigh Connett (raneigh0706@hotmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "f073c935-b50c-47f2-ae77-578d9493b7cd" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Anju Elizebeth (anjuelizebeth99@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+... and 16 more orders affected
+
+Breakdown of 503 errors by Store ID:
+ (No store IDs could be extracted from the error messages).
+
+Breakdown of 503 errors by Store Name:
+ (No store names could be extracted from the error messages).
+
+Breakdown of 503 errors by Customer Details:
+ (No user IDs could be extracted from the error messages).
+
+Note: 'UNKNOWN' refers to errors where the identifier was empty or could not be extracted.
+
+
+=== DETAILED CUSTOMER & STORE IMPACT ===
+
+📋 SUMMARY OF AFFECTED ENTITIES:
+• Total Affected Customers: 19
+  └── Sample Customer Names: Zachary Wilson, Amanda Jeffery, josh ridolfi, Leonie Scalia, Sam Simmons, Alejandro Toro, Jared Kennedy, B M, Logan Lincoln, Raneigh Connett...
+• Total Affected Store Locations: 0
+
+=== DETAILED ANALYSIS INSIGHTS ===
+
+📊 ERROR DISTRIBUTION ANALYSIS:
+• Total 503 Errors Found: 36
+• Total Log Entries Processed: 180
+• Error Rate: 20.00% of all log entries
+
+🔍 UNIQUENESS ANALYSIS:
+• Unique Order IDs Affected: 36
+• Unique Services Affected: 1
+• Unique Store IDs Affected: 0
+• Unique Store Names Affected: 0
+• Unique Users Affected: 0
+• Average Errors per Order: 1.00
+
+👥 CUSTOMER CORRELATION ANALYSIS:
+• 1 Order ID = 1 Customer Order = 1 Customer Affected
+• 36 Unique Order IDs = 36 Customers Affected
+• Customers with Single Error: 36 (100.0%)
+• Customers with Multiple Errors: 0 (0.0%)
+
+💰 BUSINESS IMPACT ESTIMATION:
+• Estimated Average Order Value: $12
+• Estimated Revenue at Risk: $432 (36 orders × $12)
+• Customer Experience Impact: 36 customers experienced failed orders
+
+📈 DATA QUALITY & CONFIDENCE ANALYSIS:
+• Order ID Extraction Success Rate: 100.0% (36/36 errors correlated)
+• Timestamp Correlation Coverage: 20.0% of log entries
+
+🎯 CONFIDENCE LEVEL: HIGH
+📋 Confidence Assessment Factors:
+   ✅ Excellent order ID extraction rate
+   ✅ Perfect 1:1 error-to-order correlation
+   ✅ Single service failure pattern (clear root cause)
+
+📊 RELIABILITY METRICS:
+• Data Completeness: 20.0% error coverage
+• Customer Identification: 100.0% success rate
+• Pattern Consistency: Single service pattern
+
+💡 DATA QUALITY RECOMMENDATIONS:
+• Data quality is excellent - proceed with confidence
+• Customer impact numbers are highly reliable
+• Business decisions can be made based on this analysis
+
+============================================================
+Using ML Dev API...
+
+--- Google Gemini's Analysis Report ---
+## 503 Error Analysis Report
+
+**Overall Status:**
+
+*   Yes, 503 "Service Unavailable" errors occurred.
+*   Total count: 36
+
+**Per-Store/Service Analysis:**
+
+*   The service `bhyve-task-order-create-lambda` experienced all 36 errors.
+
+**Order-Level Analysis:**
+
+*   36 unique orders were affected by the 503 errors. The provided log snippet shows examples:
+    *   "457bf7a2-e440-4cbf-8cd1-f0ff31721dd7"
+    *   "12885d9c-ef53-4189-888f-817b290b8413"
+    *   "5a785949-fae6-4af9-8c59-f8329847e40a"
+    *   ...and 33 more orders.
+*   These errors specifically relate to the order creation process.
+
+**Store-Level Impact:**
+
+*   Orders failed for Store ID 162 and Store ID 19
+*   Store names are unavailable in the error data.
+
+**User-Level Impact:**
+
+*   Multiple users were affected. Examples from the log include:
+    *   Zachary Wilson (zach_xl8@hotmail.com)
+    *   Amanda Jeffery (27jeffery@gmail.com)
+    *   josh ridolfi (joshridolfi@gmail.com)
+    *   ... and more.
+
+**Identify High-Impact Areas:**
+
+*   **Service:** The `bhyve-task-order-create-lambda` service is a high-impact area, experiencing all 36 errors.
+*   **User:** Amanda Jeffery (27jeffery@gmail.com) has 3 errors associated with her.
+*   **User:** josh ridolfi (joshridolfi@gmail.com) has 3 errors associated with her.
+*   **User:** B M (bryce.maybury@gmail.com) has 3 errors associated with her.
+*   **User:** Jared Kennedy (08kennedyj@gmail.com) has 3 errors associated with her.
+*   **User:** Logan Lincoln (logan.lincoln@gmail.com) has 2 errors associated with her.
+*   **Store:** Store ID 162 is a high-impact area and contains 20 errors.
+*   **Store:** Store ID 19 is a high-impact area and contains 6 errors.
+
+**Recommended Next Steps:**
+
+1.  **Investigate `bhyve-task-order-create-lambda` Service:**
+    *   Immediately examine the logs, metrics (CPU utilization, memory usage, network latency, error rates), and dependencies of the `bhyve-task-order-create-lambda` service to identify the root cause of the 503 errors.  Look for resource exhaustion, dependency failures, or code errors.
+    *   Check the deployment history of the service. A recent deployment could have introduced a bug.
+2.  **Analyze Store ID 162 & Store ID 19 performance & load:**
+    *   Investigate Store ID 162 to determine what underlying issues exist and why the service is failing for this store.
+    *   Investigate Store ID 19 to determine what underlying issues exist and why the service is failing for this store.
+3.  **Monitor for Correlation:**
+    *   Correlate the timestamps of the 503 errors with any known incidents, deployments, or infrastructure changes.
+4.  **Code Inspection:**
+    *   Examine the code paths used by the `bhyve-task-order-create-lambda` for store 162 and 19 orders.
+5.  **Contact High-Impact Users:**
+    *   Reach out to Amanda Jeffery, josh ridolfi, B M, Jared Kennedy, and Logan Lincoln to gather more details about their experience and the ordering process. This may give insights into edge cases or user-specific problems.
+6.  **Capacity Planning:**
+    *   Evaluate the current capacity of the `bhyve-task-order-create-lambda` service. Consider increasing resources (CPU, memory, network) to handle the load, especially during peak times.
+7.  **Implement Circuit Breakers:**
+    *   Implement circuit breaker patterns for the `bhyve-task-order-create-lambda` service dependencies to prevent cascading failures.
+8. **Review Error Handling & Logging:**
+    * Review the error handling logic within the `bhyve-task-order-create-lambda` service. Ensure proper error logging is in place to capture detailed information about the errors. The logging should contain store and service identifiers.
+9. **Contact the Development Team:**
+    * Alert the appropriate team of the issue, so that they can fix any bugs.
+

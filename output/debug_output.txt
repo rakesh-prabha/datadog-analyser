@@ -1,0 +1,321 @@
+🚀 Starting AI-Powered Log Analysis
+=====================================
+
+📁 Processing CSV data...
+🔍 Starting analysis of /Users/rakeshpabhakaran/dev/vertai/src/extract-2025-06-19T05_50_23.398Z.csv for 503 errors...
+🚨 Found 503 error #1:
+   ├── Service: bhyve-task-order-create-lambda
+   ├── Order: 457bf7a2-e440-4cbf-8cd1-f0ff31721dd7
+   ├── Time: 2025-06-18T21:20:48
+   └── Message: TASK api - onResponseError { "requestStartedAt": 1750281648523, "requestEndedAt": 1750281648548, "duration": 25, "response": "<!DOCTYPE HTML PUBLIC \"...
+
+🚨 Found 503 error #2:
+   ├── Service: bhyve-task-order-create-lambda
+   ├── Order: 12885d9c-ef53-4189-888f-817b290b8413
+   ├── Time: 2025-06-18T21:18:06
+   └── Message: TASK api - onResponseError { "requestStartedAt": 1750281486062, "requestEndedAt": 1750281486086, "duration": 24, "response": "<!DOCTYPE HTML PUBLIC \"...
+
+🚨 Found 503 error #3:
+   ├── Service: bhyve-task-order-create-lambda
+   ├── Order: 5a785949-fae6-4af9-8c59-f8329847e40a
+   ├── Time: 2025-06-18T21:17:04
+   └── Message: TASK api - onResponseError { "requestStartedAt": 1750281424139, "requestEndedAt": 1750281424164, "duration": 25, "response": "<!DOCTYPE HTML PUBLIC \"...
+
+✅ Finished parsing CSV: 180 rows processed
+🚨 Total 503 errors found: 36
+
+📊 Generating analysis summary...
+
+--- ANALYSIS SUMMARY FOR AI ---
+📊 LOG ANALYSIS RESULTS SUMMARY:
+Total logs analyzed: 180
+Total "503 Service Unavailable" errors detected: 36
+
+🏢 Breakdown by Store/Service:
+- Store/Service "bhyve-task-order-create-lambda": 36 errors
+
+📦 Breakdown by Order ID with Customer Details:
+- Order "457bf7a2-e440-4cbf-8cd1-f0ff31721dd7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Zachary Wilson (zach_xl8@hotmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "12885d9c-ef53-4189-888f-817b290b8413" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "5a785949-fae6-4af9-8c59-f8329847e40a" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "8fa64e46-9ae2-4e52-8634-2f1b2b51cdc7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Amanda Jeffery (27jeffery@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "08506a26-2201-4d22-8e68-d984a44436de" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "3a985a0d-2229-4397-b792-180572746479" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "94714faf-29f1-41cc-94cb-7afe1f63f3fc" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Leonie Scalia (ljscalia@bigpond.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "4c773101-aa3d-4294-a4c6-556c0e13ce85" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Sam Simmons (j4d7tqb9x6@privaterelay.appleid.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "5efdcad6-1b06-456e-a8e7-fa21377b195b" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Alejandro Toro (cxvn2jn68g@privaterelay.appleid.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "c5ed8f48-2661-4089-9dd3-00501e36207b" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: josh ridolfi (joshridolfi@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "d9511144-bd51-4c8c-a257-637fb3e0774d" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "30e0bb36-e03b-4d2e-8b8c-fec62732de38" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "1c25cb1d-ea1f-462d-bd03-57c8bc17b455" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "9badf0b2-adc8-41bd-b4d8-ea7ad53745d6" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: B M (bryce.maybury@gmail.com)
+  └── Store: Store details not available (Store ID: 19)
+
+- Order "95365f31-f8ca-4424-a162-4a01235284d4" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Logan Lincoln (logan.lincoln@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "27ca587b-4052-4dc9-8ca7-bbb0bc1d4660" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Logan Lincoln (logan.lincoln@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "1061e8b1-4909-4548-a7f7-05d8e44bdf0c" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "46b1cfb6-8d98-4d3f-bb76-14e26aa878bf" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Jared Kennedy (08kennedyj@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "2df891ff-b5f6-4d1b-8e8f-9046773819a7" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Raneigh Connett (raneigh0706@hotmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+- Order "f073c935-b50c-47f2-ae77-578d9493b7cd" (1 errors)
+  └── Service: bhyve-task-order-create-lambda
+  └── Customer: Anju Elizebeth (anjuelizebeth99@gmail.com)
+  └── Store: Store details not available (Store ID: 162)
+
+... and 16 more orders affected
+
+🏪 Breakdown by Store Location:
+ (No store IDs could be extracted)
+
+👥 Breakdown by Customer Details:
+ (No customer IDs could be extracted)
+
+📝 Note: 'UNKNOWN' refers to errors where the identifier was empty or could not be extracted.
+
+
+=== 👥 DETAILED CUSTOMER & STORE IMPACT ===
+
+📋 SUMMARY OF AFFECTED ENTITIES:
+• Total Affected Customers: 19
+  └── Sample Names: Zachary Wilson, Amanda Jeffery, josh ridolfi, Leonie Scalia, Sam Simmons, Alejandro Toro, Jared Kennedy, B M, Logan Lincoln, Raneigh Connett...
+• Total Affected Store Locations: 0
+
+=== 📊 DETAILED ANALYSIS INSIGHTS ===
+
+📈 ERROR DISTRIBUTION ANALYSIS:
+• Total 503 Errors Found: 36
+• Total Log Entries Processed: 180
+• Error Rate: 20.00% of all log entries
+
+🔍 UNIQUENESS ANALYSIS:
+• Unique Order IDs Affected: 36
+• Unique Services Affected: 1
+• Unique Store IDs Affected: 0
+• Unique Store Names Affected: 0
+• Unique Users Affected: 0
+• Average Errors per Order: 1.00
+
+👥 CUSTOMER CORRELATION ANALYSIS:
+• 1 Order ID = 1 Customer Order = 1 Customer Affected
+• 36 Unique Order IDs = 36 Customers Affected
+• Customers with Single Error: 36 (100.0%)
+• Customers with Multiple Errors: 0 (0.0%)
+
+💰 BUSINESS IMPACT ESTIMATION:
+• Estimated Average Order Value: $12
+• Estimated Revenue at Risk: $432 (36 orders × $12)
+• Customer Experience Impact: 36 customers experienced failed orders
+
+📈 DATA QUALITY & CONFIDENCE ANALYSIS:
+• Order ID Extraction Success Rate: 100.0% (36/36 errors correlated)
+• Timestamp Correlation Coverage: 20.0% of log entries
+
+🎯 CONFIDENCE LEVEL: HIGH
+📋 Confidence Assessment Factors:
+   ✅ Excellent order ID extraction rate
+   ✅ Perfect 1:1 error-to-order correlation
+   ✅ Single service failure pattern (clear root cause)
+
+📊 RELIABILITY METRICS:
+• Data Completeness: 20.0% error coverage
+• Customer Identification: 100.0% success rate
+• Pattern Consistency: Single service pattern
+
+💡 DATA QUALITY RECOMMENDATIONS:
+• Data quality is excellent - proceed with confidence
+• Customer impact numbers are highly reliable
+• Business decisions can be made based on this analysis
+
+============================================================
+
+🤖 Generating AI analysis...
+🤖 Using ML Dev API for analysis...
+
+=== 🧠 GOOGLE GEMINI AI ANALYSIS REPORT ===
+## 503 Error Log Analysis Report
+
+**Overall Status:**
+
+*   503 "Service Unavailable" errors were detected.
+*   Total count: 36
+
+**Per-Store/Service Analysis:**
+
+*   The service experiencing the errors is: `bhyve-task-order-create-lambda` (36 errors).
+
+**Order-Level Analysis:**
+
+*   Multiple orders experienced 503 errors during creation. Specific order IDs are listed in the provided summary. This indicates a problem occurring during the order creation process.
+*  There are a total of 36 orders impacted.
+
+**Store-Level Impact:**
+
+*   Two store IDs were identified across the order errors: Store ID 162 and Store ID 19.
+*   Store details are not available.
+*   The log summary does not provide a breakdown of the number of errors per store, but given the total number of errors and affected orders, it is likely that the majority of errors originated from these two stores.
+
+**User-Level Impact:**
+
+*   Multiple unique users were affected by the 503 errors, including: Zachary Wilson, Amanda Jeffery, Josh Ridolfi, Leonie Scalia, Sam Simmons, Alejandro Toro, Jared Kennedy, Logan Lincoln, Raneigh Connett, Anju Elizebeth, B M.
+*   Some users, such as Amanda Jeffery, Josh Ridolfi, Jared Kennedy, Logan Lincoln, and B M experienced multiple order creation failures, indicating a potentially persistent issue affecting their ability to place orders at certain times or from certain locations.
+
+**High-Impact Areas:**
+
+*   **Service:** `bhyve-task-order-create-lambda` is the only service showing any 503 errors (36 errors).
+*   **Store:** Store IDs 162 and 19 should be considered high-impact as many customer orders are attempting to be placed from these locations.
+*   **Users:** Amanda Jeffery (3 orders), Josh Ridolfi (3 orders), B M (3 orders), Jared Kennedy (3 orders), Logan Lincoln (2 orders) experienced multiple failed order attempts.
+
+**Recommended Next Steps:**
+
+1.  **Investigate `bhyve-task-order-create-lambda` service:**
+    *   Immediately check the health, resource utilization (CPU, memory, network), and dependencies of the `bhyve-task-order-create-lambda` service. This likely includes checking metrics in Datadog for this service.
+    *   Review recent deployments or configuration changes to this service.
+    *   Examine detailed logs for `bhyve-task-order-create-lambda` during the timeframe of the errors to pinpoint the root cause (e.g., database connection issues, timeouts, external API failures).
+2.  **Investigate Store IDs 162 and 19:**
+    *   Determine the physical location(s) associated with Store IDs 162 and 19.
+    *   Investigate any common dependencies or infrastructure used by these stores that could be contributing to the errors. This could include network connectivity, local servers, or third-party integrations.
+    *   Check the load/volume of orders at these locations. Is there a spike in order volume that is overwhelming the service?
+3.  **Monitor for Error Rate and Recovery:**
+    *   Set up real-time monitoring and alerting for 503 errors in `bhyve-task-order-create-lambda`.
+    *   Closely track the error rate to assess if the problem is resolving itself or requires intervention.
+4. **Check Downstream Dependencies:**
+    * Check any downstream services the order create lambda is calling. Identify any bottlenecks or errors on those services which may be affecting order creation.
+5.  **Contact Affected Users (If Necessary):**
+    *   Depending on the severity and persistence of the issue, consider proactively contacting users who experienced multiple failures (Amanda Jeffery, Josh Ridolfi, B M, Jared Kennedy, Logan Lincoln) to inform them of the issue and potential workaround. Provide clear communication and support.
+
+This targeted investigation should help quickly identify and resolve the root cause of the 503 errors and prevent future order creation failures.
+
+
+=== 💼 BUSINESS IMPACT ANALYSIS ===
+🤖 Using ML Dev API for analysis...
+Okay, here's an analysis of the provided log data, focused on business outcomes and actionable recommendations:
+
+**1. Executive Summary**
+
+A critical service outage impacting order creation (identified as "bhyve-task-order-create-lambda") has resulted in 36 failed order attempts, affecting 36 unique customers and potentially causing a loss of $432 in revenue. The incident points to a potential instability or bottleneck within the order processing system.  Given the limited insight into the underlying issue with the *bhyve-task-order-create-lambda* service, an urgent investigation is needed to determine the root cause and prevent further revenue and customer satisfaction losses.
+
+**2. Customer Impact Analysis**
+
+*   **Affected Customers:** 36 unique customers experienced order failures.
+*   **Disproportionate Impact:** Customers Amanda Jeffery, josh ridolfi, B M, Jared Kennedy and Logan Lincoln each had multiple failed order attempts (3, 3, 3, 3, 2 respectively). This suggests they may have been attempting to place orders repeatedly, encountering the error each time, potentially leading to significant frustration and brand perception damage.
+*   **Data Gap:** The log analysis mentions "Customer ID could not be extracted," which inhibits further customer-centric insights, such as high-value customers, frequency of purchase and loyalty segment.
+
+**Recommendation:**
+*   **Prioritize Resolution:** Address the underlying issue causing the 503 errors immediately to prevent further customer impact.
+*   **Proactive Communication:** Send a personalized apology email to all affected customers, acknowledging the order failure and offering a discount code or free shipping on their next order as a gesture of goodwill and retention (requires linking the errors to customer accounts within the CRM).
+*   **Monitor Customer Sentiment:** Keep a close eye on customer feedback channels (social media, support tickets, reviews) for any negative sentiment related to this issue.
+
+**3. Store Performance Analysis**
+
+*   **Store IDs Affected:** Store IDs 19 and 162 are associated with failed orders.
+*   **Missing Store Details:**  The lack of further store details (name, location, performance metrics) limits the depth of this analysis. It's impossible to determine if the issue is isolated to these stores or if they're simply the most affected.
+
+**Recommendations:**
+
+*   **Enrich Log Data:**  Immediately investigate why store details are missing from the log data.  This is critical for proper analysis and troubleshooting. Ensure the logging system captures complete and accurate store information.
+*   **Investigate Store ID 19 and 162:**  Prioritize investigation into any recent changes or anomalies at Store IDs 19 and 162. Check for local network issues, point-of-sale system updates, or other store-specific factors that might be contributing to the problem.
+*   **Cross-Reference with Store Performance Metrics:** Compare the performance of Store IDs 19 and 162 with other stores to identify potential patterns or correlations.
+
+**4. Revenue Impact Assessment**
+
+*   **Total Revenue at Risk:** $432 (36 failed orders * $12 average order value).
+*   **Potential Long-Term Impact:** The immediate revenue loss is only part of the picture. Dissatisfied customers may choose to shop elsewhere in the future, resulting in a longer-term impact on sales and customer lifetime value.
+*   **Customer Acquisition Cost:** Losing 36 customers not only means $432 in lost revenue, but also the cost associated with acquiring those customers in the first place.
+
+**Recommendations:**
+
+*   **Calculate Customer Lifetime Value (CLTV):**  Determine the CLTV of the affected customers to better understand the long-term revenue impact of this incident.
+*   **Monitor Cart Abandonment Rate:** Track the cart abandonment rate closely following the resolution of the issue to see if customers are still experiencing problems.
+*   **Implement Automated Recovery:** Create automated follow-up emails for abandoned carts. This will help recover revenue and identify potential issues.
+
+**5. Operational Recommendations**
+
+*   **Immediate Action Items:**
+    *   **Escalate to Engineering:** Immediately escalate the 503 errors impacting the *bhyve-task-order-create-lambda* service to the engineering team for root cause analysis and resolution. This is the TOP priority.
+    *   **Monitor System Performance:** Closely monitor the performance of the *bhyve-task-order-create-lambda* service and related infrastructure for any signs of instability or resource constraints.
+    *   **Verify System Health:** Deploy proactive monitoring to alert teams before there are widespread customer-facing impacts.
+
+*   **Longer-Term Improvements:**
+    *   **Improve Error Handling:** Implement more robust error handling within the *bhyve-task-order-create-lambda* service. Provide more descriptive error messages to customers and better logging information for troubleshooting.
+    *   **Load Testing & Capacity Planning:** Conduct thorough load testing of the order creation service to identify potential bottlenecks and ensure it can handle peak demand. Implement capacity planning to ensure sufficient resources are available.
+    *   **Logging Improvements:** Ensure that all relevant data (including Store ID, Customer ID, and detailed error messages) is captured in the logs. Consider using a structured logging format (e.g., JSON) to facilitate easier analysis.  This will enable better data-driven decision making in the future.
+    *   **Incident Response Plan:** Develop a formal incident response plan for critical service outages, including clear roles and responsibilities, communication protocols, and escalation procedures.
+    *   **Redundancy & Failover:** Investigate implementing redundancy and failover mechanisms for critical services to minimize the impact of future outages.
+
+**In summary, this incident requires immediate attention to mitigate customer frustration and revenue loss. Addressing the underlying technical issue and improving logging and monitoring are critical for preventing similar problems in the future.**
+
+
+✅ Analysis completed successfully!
