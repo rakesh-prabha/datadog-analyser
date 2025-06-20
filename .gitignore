@@ -115,6 +115,12 @@ Desktop.ini
 api-keys.txt
 credentials.json
 
+# Input data files (may contain sensitive customer data)
+data-input/*.csv
+data-input/extract-*
+data-input/customer-*
+data-input/sensitive-*
+
 # Local analysis outputs that might contain sensitive data
 output/sensitive_*
 output/customer_*

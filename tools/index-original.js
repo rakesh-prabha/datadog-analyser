@@ -23,7 +23,7 @@ const GOOGLE_GENAI_USE_VERTEXAI = process.env.GOOGLE_GENAI_USE_VERTEXAI === 'tru
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CSV_FILE_PATH = path.join(__dirname, 'extract-2025-06-19T05_50_23.398Z.csv'); // Path to your exported CSV file
+const CSV_FILE_PATH = path.join(__dirname, '..', 'data-input', 'extract-2025-06-19T05_50_23.398Z.csv'); // Path to your exported CSV file
 // IMPORTANT: Adjust these column names to match your Datadog CSV export
 const STATUS_CODE_COLUMN = 'Message'; // The message content where we'll search for 503 errors
 const STORE_IDENTIFIER_COLUMN = 'Service'; // e.g., 'service', 'host', 'store_id', 'tags.store_name'

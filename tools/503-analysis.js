@@ -12,7 +12,7 @@ import csv from 'csv-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CSV_FILE_PATH = path.join(__dirname, 'src/extract-2025-06-19T05_50_23.398Z.csv');
+const CSV_FILE_PATH = path.join(__dirname, '..', 'data-input', 'extract-2025-06-19T05_50_23.398Z.csv');
 
 class Error503Analyzer {
     constructor() {

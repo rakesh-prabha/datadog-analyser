@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node src/index.js",
     "analyze": "node src/index.js",
-    "validate": "node csv-validator.js",
+    "validate": "node tools/csv-validator.js",
+    "templates": "node tools/template-manager.js",
+    "templates:list": "node tools/template-manager.js list",
+    "templates:validate": "node tools/template-manager.js validate",
+    "templates:examples": "node tools/template-manager.js examples",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["log-analysis", "datadog", "503-errors", "ai-analysis", "google-gemini"],

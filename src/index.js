@@ -87,7 +87,7 @@ class LogAnalyzer {
     }
 
     async generateAIInsights(analysisSummary) {
-        console.log('\n🤖 Generating AI analysis...');
+        console.log('\n🤖 Generating AI analysis with template system...');
         
         try {
             // Generate operational analysis prompt
@@ -106,6 +106,14 @@ class LogAnalyzer {
                 const businessPrompt = this.promptGenerator.generateBusinessImpactPrompt(analysisSummary);
                 const businessAnalysis = await this.geminiClient.generateAnalysis(businessPrompt);
                 console.log(businessAnalysis);
+                
+                // Optional: Generate executive summary for high-impact incidents
+                if (this.data.total503Errors > 20 || this.data.uniqueOrders > 15) {
+                    console.log('\n=== 📋 EXECUTIVE SUMMARY ===');
+                    const executivePrompt = this.promptGenerator.generateExecutiveSummaryPrompt(analysisSummary);
+                    const executiveAnalysis = await this.geminiClient.generateAnalysis(executivePrompt);
+                    console.log(executiveAnalysis);
+                }
             }
             
         } catch (error) {

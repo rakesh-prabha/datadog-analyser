@@ -17,8 +17,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const CONFIG = {
-    CSV_FILE_PATH: path.join(__dirname, 'extract-2025-06-19T05_50_23.398Z.csv'),
-    STORE_DATA_PATH: path.join(__dirname, 'storeData.csv'),
+    INPUT_LOGS_DIR: path.join(__dirname, '..', 'data-input', 'input-logs'),
+    STORE_DATA_PATH: path.join(__dirname, '..', 'data-input', 'storeData.csv'),
     STATUS_CODE_COLUMN: 'Message',
     STORE_IDENTIFIER_COLUMN: 'Service',
     ERROR_CODE_TO_LOOK_FOR: '503',
@@ -93,6 +93,9 @@ export class LogAnalysisData {
         this.userIdErrorCounts = new Map();
         this.storeNameErrorCounts = new Map();
         
+        // Order value tracking
+        this.orderValues = new Map(); // orderId -> order value
+        
         // Correlation maps - initialize with provided store mapping
         this.storeIdToNameMap = new Map(storeMapping);
         this.userToStoreMap = new Map();
@@ -108,6 +111,26 @@ export class LogAnalysisData {
     get uniqueStores() { return this.storeIdErrorCounts.size; }
     get uniqueUsers() { return this.userIdErrorCounts.size; }
     get uniqueStoreNames() { return this.storeNameErrorCounts.size; }
+    
+    // Calculate total revenue at risk using actual order values
+    get totalRevenueAtRisk() {
+        let totalRevenue = 0;
+        let ordersWithValues = 0;
+        
+        for (const orderId of this.orderErrorCounts.keys()) {
+            const orderValue = this.orderValues.get(orderId);
+            if (orderValue && orderValue > 0) {
+                totalRevenue += orderValue;
+                ordersWithValues++;
+            }
+        }
+        
+        return {
+            totalRevenue: totalRevenue,
+            ordersWithValues: ordersWithValues,
+            averageOrderValue: ordersWithValues > 0 ? totalRevenue / ordersWithValues : 0
+        };
+    }
 }
 
 // ===============================================
@@ -168,6 +191,36 @@ export class DataExtractor {
         return match ? match[1].trim() : null;
     }
 
+    static extractOrderValue(messageContent) {
+        // Pattern 1: Extract value from medias array (total order value)
+        const mediasValueMatch = messageContent.match(/\\"medias\\":\s*\[.*?\\"value\\":\s*([0-9]+\.?[0-9]*)/);
+        if (mediasValueMatch) {
+            return parseFloat(mediasValueMatch[1]);
+        }
+        
+        // Pattern 2: Extract total value from items array (sum of all items)
+        const itemsMatches = messageContent.match(/\\"items\\":\s*\[(.*?)\]/);
+        if (itemsMatches) {
+            const itemsContent = itemsMatches[1];
+            const valueMatches = itemsContent.match(/\\"value\\":\s*([0-9]+\.?[0-9]*)/g);
+            if (valueMatches) {
+                const totalValue = valueMatches.reduce((sum, match) => {
+                    const value = parseFloat(match.match(/([0-9]+\.?[0-9]*)/)[1]);
+                    return sum + value;
+                }, 0);
+                return totalValue;
+            }
+        }
+        
+        // Pattern 3: Single item value as fallback
+        const singleValueMatch = messageContent.match(/\\"value\\":\s*([0-9]+\.?[0-9]*)/);
+        if (singleValueMatch) {
+            return parseFloat(singleValueMatch[1]);
+        }
+        
+        return null; // No value could be extracted
+    }
+
     static isError503(messageContent) {
         return messageContent.includes(CONFIG.ERROR_CODE_TO_LOOK_FOR) || 
                messageContent.includes('Service Unavailable') ||
@@ -185,23 +238,51 @@ export class CSVProcessor {
     }
 
     async processCSV() {
-        if (!fs.existsSync(CONFIG.CSV_FILE_PATH)) {
-            throw new Error(`CSV file not found at ${CONFIG.CSV_FILE_PATH}`);
+        if (!fs.existsSync(CONFIG.INPUT_LOGS_DIR)) {
+            throw new Error(`Input logs directory not found at ${CONFIG.INPUT_LOGS_DIR}`);
         }
 
-        console.log(`🔍 Starting analysis of ${CONFIG.CSV_FILE_PATH} for ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors...`);
+        // Get all CSV files in the input-logs directory
+        const files = fs.readdirSync(CONFIG.INPUT_LOGS_DIR)
+            .filter(file => file.toLowerCase().endsWith('.csv'))
+            .map(file => path.join(CONFIG.INPUT_LOGS_DIR, file));
+
+        if (files.length === 0) {
+            throw new Error(`No CSV files found in ${CONFIG.INPUT_LOGS_DIR}`);
+        }
+
+        console.log(`🔍 Found ${files.length} CSV file(s) to process:`);
+        files.forEach(file => console.log(`   📄 ${path.basename(file)}`));
+        console.log(`🔍 Starting analysis for ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors...`);
+
+        // Process each CSV file
+        for (const filePath of files) {
+            await this.processSingleCSV(filePath);
+        }
+
+        console.log(`✅ Finished processing all CSV files: ${this.data.totalProcessedRows} total rows processed`);
+        console.log(`🚨 Total ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors found: ${this.data.total503Errors}`);
+    }
+
+    async processSingleCSV(filePath) {
+        const fileName = path.basename(filePath);
+        console.log(`\n📁 Processing ${fileName}...`);
 
         return new Promise((resolve, reject) => {
-            fs.createReadStream(CONFIG.CSV_FILE_PATH)
+            let fileRowCount = 0;
+            
+            fs.createReadStream(filePath)
                 .pipe(csv())
-                .on('data', (row) => this.processRow(row))
+                .on('data', (row) => {
+                    fileRowCount++;
+                    this.processRow(row);
+                })
                 .on('end', () => {
-                    console.log(`✅ Finished parsing CSV: ${this.data.totalProcessedRows} rows processed`);
-                    console.log(`🚨 Total ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors found: ${this.data.total503Errors}`);
+                    console.log(`✅ Completed ${fileName}: ${fileRowCount} rows processed`);
                     resolve();
                 })
                 .on('error', (err) => {
-                    console.error('❌ Error reading CSV:', err.message);
+                    console.error(`❌ Error reading ${fileName}:`, err.message);
                     reject(err);
                 });
         });
@@ -233,22 +314,29 @@ export class CSVProcessor {
         const userIdFromLog = DataExtractor.extractUserId(messageContent);
         const userDetails = DataExtractor.extractUserDetails(messageContent);
         const storeNameFromLog = DataExtractor.extractStoreName(messageContent);
+        const orderValue = DataExtractor.extractOrderValue(messageContent);
 
         return {
             orderId,
             storeIdFromLog,
             userIdFromLog,
             storeNameFromLog,
+            orderValue,
             ...userDetails
         };
     }
 
     storeCorrelations(data, timeKey) {
-        const { orderId, storeIdFromLog, userIdFromLog, storeNameFromLog, firstName, lastName, email } = data;
+        const { orderId, storeIdFromLog, userIdFromLog, storeNameFromLog, firstName, lastName, email, orderValue } = data;
 
         // Map timestamp to order ID
         if (orderId) {
             this.data.timestampToOrderMap.set(timeKey, orderId);
+            
+            // Store order value if available
+            if (orderValue && orderValue > 0) {
+                this.data.orderValues.set(orderId, orderValue);
+            }
         }
 
         // Map store ID to store name

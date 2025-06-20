@@ -58,11 +58,18 @@ export class AnalysisGenerator {
                 const serviceName = this.data.orderToServiceMap.get(orderId) || 'UNKNOWN';
                 const customerInfo = this.getCustomerInfoForOrder(orderId);
                 const storeInfo = this.getStoreInfoForOrder(orderId);
+                const orderValue = this.data.orderValues.get(orderId);
 
                 breakdown += `- Order "${orderId}" (${count} errors)\n`;
                 breakdown += `  └── Service: ${serviceName}\n`;
                 breakdown += `  └── Customer: ${customerInfo}\n`;
-                breakdown += `  └── Store: ${storeInfo}\n\n`;
+                breakdown += `  └── Store: ${storeInfo}\n`;
+                if (orderValue && orderValue > 0) {
+                    breakdown += `  └── Order Value: $${orderValue.toFixed(2)}\n`;
+                } else {
+                    breakdown += `  └── Order Value: Not extractable\n`;
+                }
+                breakdown += `\n`;
             });
 
             if (sorted.length > CONFIG.MAX_ORDER_DISPLAY) {
@@ -137,6 +144,13 @@ export class AnalysisGenerator {
 export class ConsoleReporter {
     constructor(data) {
         this.data = data;
+    }
+
+    // Helper method to get customer info for a specific order
+    getCustomerInfoForOrder(orderId) {
+        const customerName = this.data.userToStoreMap.get(`order_${orderId}_customer`) || 'Customer details not available';
+        const customerEmail = this.data.userToStoreMap.get(`order_${orderId}_customerEmail`) || '';
+        return customerEmail ? `${customerName} (${customerEmail})` : customerName;
     }
 
     displayDetailedCustomerImpact() {
@@ -291,13 +305,143 @@ export class ConsoleReporter {
     }
 
     displayBusinessImpact() {
-        const avgOrderValue = 12; // Estimated from data
-        const estimatedRevenueLoss = this.data.uniqueOrders * avgOrderValue;
+        const revenueData = this.data.totalRevenueAtRisk;
         
         console.log("\n💰 BUSINESS IMPACT ESTIMATION:");
-        console.log(`• Estimated Average Order Value: $${avgOrderValue}`);
-        console.log(`• Estimated Revenue at Risk: $${estimatedRevenueLoss} (${this.data.uniqueOrders} orders × $${avgOrderValue})`);
+        
+        if (revenueData.ordersWithValues > 0) {
+            // Show individual order values first
+            this.displayIndividualOrderValues();
+            
+            // Clear breakdown of revenue calculations
+            console.log(`\n📊 REVENUE BREAKDOWN:`);
+            console.log(`• Orders with Actual Values: ${revenueData.ordersWithValues} orders`);
+            console.log(`  └── Actual Revenue at Risk: $${revenueData.totalRevenue.toFixed(2)}`);
+            
+            // If we have missing values, estimate for those
+            if (revenueData.ordersWithValues < this.data.uniqueOrders) {
+                const missingOrders = this.data.uniqueOrders - revenueData.ordersWithValues;
+                const estimatedMissingRevenue = missingOrders * revenueData.averageOrderValue;
+                console.log(`• Orders without Values: ${missingOrders} orders`);
+                console.log(`  └── Estimated Revenue at Risk: $${estimatedMissingRevenue.toFixed(2)} (${missingOrders} orders × $${revenueData.averageOrderValue.toFixed(2)} avg)`);
+                
+                const totalEstimatedRevenue = revenueData.totalRevenue + estimatedMissingRevenue;
+                console.log(`\n💰 TOTAL REVENUE IMPACT:`);
+                console.log(`• Combined Revenue at Risk: $${totalEstimatedRevenue.toFixed(2)}`);
+                console.log(`  ├── Known Values: $${revenueData.totalRevenue.toFixed(2)} (${revenueData.ordersWithValues} orders)`);
+                console.log(`  └── Estimated Values: $${estimatedMissingRevenue.toFixed(2)} (${missingOrders} orders)`);
+            } else {
+                console.log(`\n💰 TOTAL REVENUE IMPACT:`);
+                console.log(`• Total Revenue at Risk: $${revenueData.totalRevenue.toFixed(2)} (all orders have known values)`);
+            }
+            
+            console.log(`\n📈 ORDER VALUE METRICS:`);
+            console.log(`• Average Order Value: $${revenueData.averageOrderValue.toFixed(2)} (calculated from actual data)`);
+            console.log(`• Data Coverage: ${revenueData.ordersWithValues} of ${this.data.uniqueOrders} orders (${((revenueData.ordersWithValues / this.data.uniqueOrders) * 100).toFixed(1)}%)`);
+            
+            // Add price distribution analysis
+            this.displayPriceDistribution();
+        } else {
+            // Fallback to estimated average (previous behavior)
+            const avgOrderValue = 12;
+            const estimatedRevenueLoss = this.data.uniqueOrders * avgOrderValue;
+            console.log(`• Estimated Average Order Value: $${avgOrderValue} (no actual values extracted)`);
+            console.log(`• Estimated Revenue at Risk: $${estimatedRevenueLoss} (${this.data.uniqueOrders} orders × $${avgOrderValue})`);
+        }
+        
+        console.log(`\n👥 CUSTOMER IMPACT:`);
         console.log(`• Customer Experience Impact: ${this.data.uniqueOrders} customers experienced failed orders`);
+    }
+
+    displayIndividualOrderValues() {
+        console.log(`\n💵 INDIVIDUAL ORDER VALUES:`);
+        
+        // Get all orders with their values, sorted by value descending
+        const ordersWithValues = [];
+        for (const [orderId, value] of this.data.orderValues.entries()) {
+            if (value && value > 0) {
+                const customerInfo = this.getCustomerInfoForOrder(orderId);
+                ordersWithValues.push({
+                    orderId,
+                    value,
+                    customer: customerInfo
+                });
+            }
+        }
+        
+        // Sort by value descending to show highest orders first
+        ordersWithValues.sort((a, b) => b.value - a.value);
+        
+        if (ordersWithValues.length === 0) {
+            console.log(`• No order values could be extracted from the logs`);
+            return;
+        }
+        
+        // Show top 10 orders and summary
+        const displayCount = Math.min(10, ordersWithValues.length);
+        console.log(`• Top ${displayCount} Orders by Value (of ${ordersWithValues.length} total with known values):`);
+        
+        ordersWithValues.slice(0, displayCount).forEach((order, index) => {
+            console.log(`  ${index + 1}. Order ${order.orderId.substring(0, 8)}... - $${order.value.toFixed(2)}`);
+            console.log(`     └── Customer: ${order.customer}`);
+        });
+        
+        if (ordersWithValues.length > displayCount) {
+            console.log(`     ... and ${ordersWithValues.length - displayCount} more orders with values`);
+        }
+    }
+
+    displayPriceDistribution() {
+        console.log(`\n📊 PRICE DISTRIBUTION ANALYSIS:`);
+        
+        const values = Array.from(this.data.orderValues.values()).filter(v => v && v > 0);
+        
+        if (values.length === 0) {
+            console.log(`• No price distribution data available`);
+            return;
+        }
+        
+        // Calculate distribution metrics
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const median = this.calculateMedian(values);
+        const std = this.calculateStandardDeviation(values);
+        
+        console.log(`• Price Range: $${min.toFixed(2)} - $${max.toFixed(2)}`);
+        console.log(`• Median Order Value: $${median.toFixed(2)}`);
+        console.log(`• Standard Deviation: $${std.toFixed(2)}`);
+        
+        // Price buckets
+        const buckets = {
+            'Under $10': values.filter(v => v < 10).length,
+            '$10-$20': values.filter(v => v >= 10 && v < 20).length,
+            '$20-$30': values.filter(v => v >= 20 && v < 30).length,
+            '$30-$50': values.filter(v => v >= 30 && v < 50).length,
+            '$50+': values.filter(v => v >= 50).length
+        };
+        
+        console.log(`• Price Distribution:`);
+        for (const [range, count] of Object.entries(buckets)) {
+            if (count > 0) {
+                const percentage = ((count / values.length) * 100).toFixed(1);
+                console.log(`  - ${range}: ${count} orders (${percentage}%)`);
+            }
+        }
+    }
+
+    calculateMedian(values) {
+        const sorted = [...values].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 === 0 
+            ? (sorted[mid - 1] + sorted[mid]) / 2 
+            : sorted[mid];
+    }
+
+    calculateStandardDeviation(values) {
+        const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+        const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
+        const avgSquaredDiff = squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+        return Math.sqrt(avgSquaredDiff);
     }
 
     displayDataQuality() {

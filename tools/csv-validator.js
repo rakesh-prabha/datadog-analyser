@@ -12,7 +12,7 @@ import csv from 'csv-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CSV_FILE_PATH = path.join(__dirname, 'src/extract-2025-06-19T05_50_23.398Z.csv');
+const INPUT_LOGS_DIR = path.join(__dirname, '..', 'data-input', 'input-logs');
 
 class CSVValidator {
     constructor() {
@@ -32,12 +32,40 @@ class CSVValidator {
         console.log('🔍 STARTING COMPREHENSIVE CSV DATA VALIDATION');
         console.log('='.repeat(50));
 
+        if (!fs.existsSync(INPUT_LOGS_DIR)) {
+            throw new Error(`Input logs directory not found at ${INPUT_LOGS_DIR}`);
+        }
+
+        // Get all CSV files in the input-logs directory
+        const files = fs.readdirSync(INPUT_LOGS_DIR)
+            .filter(file => file.toLowerCase().endsWith('.csv'))
+            .map(file => path.join(INPUT_LOGS_DIR, file));
+
+        if (files.length === 0) {
+            throw new Error(`No CSV files found in ${INPUT_LOGS_DIR}`);
+        }
+
+        console.log(`📄 Found ${files.length} CSV file(s) to validate:`);
+        files.forEach(file => console.log(`   📄 ${path.basename(file)}`));
+
+        // Process each CSV file
+        for (const filePath of files) {
+            await this.validateSingleCSV(filePath);
+        }
+
+        this.generateValidationReport();
+    }
+
+    async validateSingleCSV(filePath) {
+        const fileName = path.basename(filePath);
+        console.log(`\n🔍 Validating ${fileName}...`);
+
         return new Promise((resolve, reject) => {
-            fs.createReadStream(CSV_FILE_PATH)
+            fs.createReadStream(filePath)
                 .pipe(csv())
                 .on('data', (row) => this.analyzeRow(row))
                 .on('end', () => {
-                    this.generateValidationReport();
+                    console.log(`✅ Completed validation of ${fileName}`);
                     resolve();
                 })
                 .on('error', reject);
@@ -71,12 +99,19 @@ class CSVValidator {
     }
 
     is503Error(message) {
+        if (!message || typeof message !== 'string') {
+            return false;
+        }
         return message.includes('503') || 
                message.includes('Service Unavailable') ||
                message.includes('HTTP Error 503');
     }
 
     extractOrderData(message, timestamp) {
+        if (!message || typeof message !== 'string') {
+            return;
+        }
+        
         // Extract orderId
         const orderIdMatch = message.match(/\\"orderId\\":\s*\\"([^"]+)\\"/);
         if (orderIdMatch) {
@@ -104,6 +139,10 @@ class CSVValidator {
     }
 
     extractCustomerData(message) {
+        if (!message || typeof message !== 'string') {
+            return;
+        }
+        
         // Extract customer details
         const firstNameMatch = message.match(/\\"firstName\\":\s*\\"([^"]+)\\"/);
         const lastNameMatch = message.match(/\\"lastName\\":\s*\\"([^"]+)\\"/);

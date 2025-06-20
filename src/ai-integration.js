@@ -1,11 +1,13 @@
 // ===============================================
 // AI INTEGRATION MODULE
 // ===============================================
-// Handles Google Gemini AI integration for log analysis
+// Handles Google Gemini AI integration with template system
 
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { CONFIG } from './log-analyzer.js';
+import PromptTemplateRegistry, { TEMPLATE_TYPES } from './templates/prompt-templates.js';
+import { TEMPLATE_CONFIG } from './templates/template-config.js';
 
 dotenv.config();
 
@@ -13,11 +15,25 @@ dotenv.config();
 // CONFIGURATION
 // ===============================================
 
-const AI_CONFIG = {
+export const AI_CONFIG = {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
     GOOGLE_CLOUD_LOCATION: process.env.GOOGLE_CLOUD_LOCATION,
-    USE_VERTEX_AI: process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true'
+    USE_VERTEX_AI: process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true',
+    
+    // Template System Configuration
+    defaultTemplates: TEMPLATE_CONFIG.defaults,
+    templateValidation: TEMPLATE_CONFIG.validation,
+    
+    // AI Model Configuration
+    model: 'gemini-1.5-flash',
+    temperature: 0.7,
+    maxOutputTokens: 2048,
+    
+    // API Configuration
+    apiTimeout: 30000,
+    retryAttempts: 2,
+    retryDelay: 1000
 };
 
 // ===============================================
@@ -27,6 +43,7 @@ const AI_CONFIG = {
 export class GeminiClient {
     constructor() {
         this.validateConfiguration();
+        this.templateRegistry = new PromptTemplateRegistry();
     }
 
     validateConfiguration() {
@@ -39,6 +56,23 @@ export class GeminiClient {
                 throw new Error('ML Dev API requires GEMINI_API_KEY in .env');
             }
         }
+    }
+
+    /**
+     * Generate analysis using specified template
+     * @param {String} templateType - Type of template to use
+     * @param {Object} variables - Variables for template interpolation
+     * @returns {String} AI analysis response
+     */
+    async generateAnalysisWithTemplate(templateType, variables) {
+        const templateId = AI_CONFIG.defaultTemplates[templateType];
+        const prompt = this.templateRegistry.renderTemplate(templateId, variables);
+        
+        if (!prompt) {
+            throw new Error(`Failed to render template: ${templateId}`);
+        }
+        
+        return await this.generateAnalysis(prompt);
     }
 
     async generateAnalysis(analysisPrompt) {
@@ -92,65 +126,197 @@ export class GeminiClient {
 }
 
 // ===============================================
-// PROMPT GENERATOR
+// ENHANCED PROMPT GENERATOR WITH TEMPLATE SYSTEM
 // ===============================================
 
 export class PromptGenerator {
     constructor(data) {
         this.data = data;
+        this.templateRegistry = new PromptTemplateRegistry();
     }
 
+    /**
+     * Generate operational analysis prompt using template
+     * @param {String} analysisSummary - Analysis summary data
+     * @returns {String} Rendered prompt
+     */
     generateAnalysisPrompt(analysisSummary) {
-        const prompt = `You are an expert operations engineer specialized in analyzing application logs and identifying service health issues. I have provided a summary of ${CONFIG.ERROR_CODE_TO_LOOK_FOR} "Service Unavailable" errors found in a recent Datadog log export.
-
-Your task is to analyze this summary and provide a concise, actionable report covering the following:
-
-1.  **Overall Status:** Did ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors occur? If so, what is the total count?
-2.  **Per-Store/Service Analysis:** List any stores or services that experienced ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors.
-3.  **Order-Level Analysis:** Identify specific orders that failed and analyze patterns. This helps pinpoint which restaurant/location had issues.
-4.  **Store-Level Impact:** Analyze which specific store locations (by Store ID and Store Name) were affected and their error patterns.
-5.  **User-Level Impact:** Identify individual users affected and any patterns in user impact.
-6.  **Identify High-Impact Areas:** Specifically highlight any store(s), service(s), users, or orders that experienced *multiple* (more than 1) ${CONFIG.ERROR_CODE_TO_LOOK_FOR} errors. Quantify the errors for these specific high-impact areas.
-7.  **Recommended Next Steps:** Based on the presence and distribution of these errors, suggest immediate next steps for investigation and troubleshooting. Be specific (e.g., "Check logs for Store ID X", "Contact User Y", "Monitor Z metric for Service W", "Investigate Store Location for Order ID"). If no errors were found, state that and suggest ongoing monitoring.
-
---- Log Analysis Summary ---
-${analysisSummary}
---- End of Summary ---
-
-Please structure your answer clearly with headings for each point (Overall Status, Per-Store/Service Analysis, Order-Level Analysis, Store-Level Impact, User-Level Impact, High-Impact Areas, Recommended Next Steps). Keep it professional and focused on operational insights.`;
-
-        return prompt;
+        const variables = {
+            errorCode: CONFIG.ERROR_CODE_TO_LOOK_FOR,
+            analysisSummary: analysisSummary
+        };
+        
+        return this.templateRegistry.renderTemplate(
+            AI_CONFIG.defaultTemplates.operational,
+            variables
+        );
     }
 
+    /**
+     * Generate business impact prompt using template
+     * @param {String} analysisSummary - Analysis summary data
+     * @returns {String} Rendered prompt
+     */
     generateBusinessImpactPrompt(analysisSummary) {
-        const estimatedRevenue = this.data.uniqueOrders * 12; // $12 avg order
+        const revenueData = this.data.totalRevenueAtRisk;
         
-        return `As a business operations analyst, analyze this log data focusing on customer and revenue impact:
+        // Calculate detailed revenue breakdown
+        let estimatedRevenue, averageOrderValue, actualRevenue = 0, estimatedMissingRevenue = 0;
+        let revenueBreakdown = '';
+        let individualOrdersInfo = '';
+        
+        if (revenueData.ordersWithValues > 0) {
+            // Use actual order values when available
+            actualRevenue = revenueData.totalRevenue;
+            averageOrderValue = revenueData.averageOrderValue;
+            
+            // Get individual order values for context
+            const ordersWithValues = [];
+            for (const [orderId, value] of this.data.orderValues.entries()) {
+                if (value && value > 0) {
+                    ordersWithValues.push({ orderId: orderId.substring(0, 8), value });
+                }
+            }
+            
+            // Sort by value descending
+            ordersWithValues.sort((a, b) => b.value - a.value);
+            
+            // Create summary of individual orders (top 5)
+            const topOrders = ordersWithValues.slice(0, 5);
+            if (topOrders.length > 0) {
+                individualOrdersInfo = `Top order values: ${topOrders.map(o => `$${o.value.toFixed(2)}`).join(', ')}`;
+                if (ordersWithValues.length > 5) {
+                    individualOrdersInfo += ` (showing 5 of ${ordersWithValues.length} orders with known values)`;
+                }
+                
+                // Add price range
+                const minValue = Math.min(...ordersWithValues.map(o => o.value));
+                const maxValue = Math.max(...ordersWithValues.map(o => o.value));
+                individualOrdersInfo += `. Price range: $${minValue.toFixed(2)} - $${maxValue.toFixed(2)}`;
+            }
+            
+            // Calculate missing revenue if any
+            if (revenueData.ordersWithValues < this.data.uniqueOrders) {
+                const missingOrders = this.data.uniqueOrders - revenueData.ordersWithValues;
+                estimatedMissingRevenue = missingOrders * revenueData.averageOrderValue;
+                estimatedRevenue = actualRevenue + estimatedMissingRevenue;
+                
+                revenueBreakdown = `Known Values: $${actualRevenue.toFixed(2)} from ${revenueData.ordersWithValues} orders, Estimated: $${estimatedMissingRevenue.toFixed(2)} from ${missingOrders} orders`;
+            } else {
+                estimatedRevenue = actualRevenue;
+                revenueBreakdown = `All ${revenueData.ordersWithValues} orders have known values`;
+            }
+        } else {
+            // Fallback to estimated average
+            averageOrderValue = 12;
+            estimatedRevenue = this.data.uniqueOrders * averageOrderValue;
+            revenueBreakdown = `All revenue estimated using $${averageOrderValue} average (no actual values extracted)`;
+            individualOrdersInfo = 'No individual order values could be extracted from the logs';
+        }
+        
+        const variables = {
+            estimatedRevenue: estimatedRevenue.toFixed(2),
+            actualRevenue: actualRevenue.toFixed(2),
+            estimatedMissingRevenue: estimatedMissingRevenue.toFixed(2),
+            averageOrderValue: averageOrderValue.toFixed(2),
+            actualOrdersWithValues: revenueData.ordersWithValues,
+            revenueBreakdown: revenueBreakdown,
+            individualOrdersInfo: individualOrdersInfo,
+            uniqueOrders: this.data.uniqueOrders,
+            uniqueCustomers: this.data.uniqueUsers,
+            uniqueStores: this.data.uniqueStores,
+            errorCount: this.data.total503Errors,
+            analysisSummary: analysisSummary
+        };
+        
+        return this.templateRegistry.renderTemplate(
+            AI_CONFIG.defaultTemplates.business,
+            variables
+        );
+    }
 
-BUSINESS CONTEXT:
-- Each failed order represents a lost customer transaction
-- Average order value: $12
-- Total revenue at risk: $${estimatedRevenue}
-- Customer satisfaction impact: ${this.data.uniqueOrders} customers affected
+    /**
+     * Generate executive summary prompt using template
+     * @param {String} analysisSummary - Analysis summary data
+     * @param {String} confidenceLevel - Data confidence level
+     * @returns {String} Rendered prompt
+     */
+    generateExecutiveSummaryPrompt(analysisSummary, confidenceLevel = 'HIGH') {
+        const estimatedRevenue = this.data.uniqueOrders * 12;
+        
+        const variables = {
+            errorCount: this.data.total503Errors,
+            estimatedRevenue: estimatedRevenue,
+            uniqueCustomers: this.data.uniqueUsers,
+            confidenceLevel: confidenceLevel,
+            analysisSummary: analysisSummary
+        };
+        
+        return this.templateRegistry.renderTemplate(
+            AI_CONFIG.defaultTemplates.executive,
+            variables
+        );
+    }
 
-KEY METRICS:
-- Total 503 Errors: ${this.data.total503Errors}
-- Unique Orders Affected: ${this.data.uniqueOrders}
-- Unique Customers Affected: ${this.data.uniqueUsers}
-- Store Locations Affected: ${this.data.uniqueStores}
+    /**
+     * Generate technical deep-dive prompt using template
+     * @param {String} analysisSummary - Analysis summary data
+     * @param {String} systemName - Name of the system being analyzed
+     * @param {String} timeRange - Time range of analysis
+     * @returns {String} Rendered prompt
+     */
+    generateTechnicalPrompt(analysisSummary, systemName = 'Order Processing Service', timeRange = 'Recent analysis period') {
+        const variables = {
+            errorCode: CONFIG.ERROR_CODE_TO_LOOK_FOR,
+            systemName: systemName,
+            timeRange: timeRange,
+            analysisSummary: analysisSummary
+        };
+        
+        return this.templateRegistry.renderTemplate(
+            AI_CONFIG.defaultTemplates.technical,
+            variables
+        );
+    }
 
-Please provide:
-1. **Executive Summary** - High-level business impact
-2. **Customer Impact Analysis** - Which customers were most affected
-3. **Store Performance Analysis** - Which locations need attention
-4. **Revenue Impact Assessment** - Financial implications
-5. **Operational Recommendations** - Immediate action items
+    /**
+     * Generate prompt using custom template
+     * @param {String} templateId - Template identifier
+     * @param {Object} customVariables - Custom variables for template
+     * @param {String} analysisSummary - Analysis summary data
+     * @returns {String} Rendered prompt
+     */
+    generateCustomPrompt(templateId, customVariables = {}, analysisSummary) {
+        const defaultVariables = {
+            errorCode: CONFIG.ERROR_CODE_TO_LOOK_FOR,
+            errorCount: this.data.total503Errors,
+            uniqueOrders: this.data.uniqueOrders,
+            uniqueCustomers: this.data.uniqueUsers,
+            uniqueStores: this.data.uniqueStores,
+            estimatedRevenue: this.data.uniqueOrders * 12,
+            analysisSummary: analysisSummary
+        };
+        
+        const variables = { ...defaultVariables, ...customVariables };
+        
+        return this.templateRegistry.renderTemplate(templateId, variables);
+    }
 
---- Detailed Analysis ---
-${analysisSummary}
---- End Analysis ---
+    /**
+     * List available templates
+     * @returns {Array} Array of template metadata
+     */
+    getAvailableTemplates() {
+        return this.templateRegistry.listTemplates();
+    }
 
-Focus on business outcomes and actionable recommendations for management.`;
+    /**
+     * Get templates by type
+     * @param {String} type - Template type
+     * @returns {Array} Array of templates
+     */
+    getTemplatesByType(type) {
+        return this.templateRegistry.getTemplatesByType(type);
     }
 }
 
